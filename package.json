@@ -1,0 +1,79 @@
+{
+  "name": "myblogs",
+  "version": "1.0.0",
+  "description": "新博客",
+  "private": true,
+  "sideEffects": false,
+  "assetExtractCss": true,
+  "deploy": {
+    "cdn": "",
+    "cdnDir": "unionvip/app/platformvip/"
+  },
+  "scripts": {
+    "server": "cross-env NODE_ENV=development dev=true webpack-dev-server --hot --color",
+    "open": "cross-env NODE_ENV=development dev=true webpack-dev-server --open --hot --color",
+    "build:test": "cross-env NODE_ENV=production dev=false GULP_ENV=test webpack --progress --hide-modules --color",
+    "build:prod": "cross-env NODE_ENV=production dev=false GULP_ENV=prod webpack --progress --hide-modules --color"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lihwang/myblogs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lihwang/myblogs/issues"
+  },
+  "homepage": "https://github.com/lihwang/myblogs#readme",
+  "devDependencies": {
+    "autoprefixer": "latest",
+    "babel-core": "^6.0.0",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-import": "^1.9.1",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "cross-env": "^5.2.1",
+    "css-loader": "^3.2.0",
+    "del": "^5.1.0",
+    "file-loader": "^4.2.0",
+    "glob": "^7.1.4",
+    "gulp": "^4.0.2",
+    "gulp-util": "^3.0.8",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "postcss-loader": "^3.0.0",
+    "style-loader": "^1.0.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "url-loader": "^2.1.0",
+    "webpack": "^4.39.3",
+    "webpack-bundle-analyzer": "^3.4.1",
+    "webpack-cli": "^3.3.8",
+    "webpack-dev-server": "^3.8.0",
+    "webpack-merge": "^4.2.2"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "lodash": "^4.17.15",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "react-loadable": "^5.5.0",
+    "react-redux": "^5.0.6",
+    "react-router-dom": "^4.2.2",
+    "normalize.css": "~4.2.0",
+    "prop-types": "^15.7.2",
+    "qs": "^6.5.2",
+    "antd-mobile": "^2.1.8",
+    "axios": "^0.18.0",
+    "babel-runtime": "6.x",
+    "classnames": "^2.2.5",
+    "copy-to-clipboard": "^3.0.8",
+    "core-js": "^2.4.1",
+    "regenerator-runtime": "^0.13.2",
+    "vconsole": "^2.5.2"
+  }
+}
