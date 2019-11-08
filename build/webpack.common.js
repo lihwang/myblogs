@@ -1,36 +1,35 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require("path");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const webpack = require('webpack');
 const fs = require('fs');
-// const webpack= require("webpack");
 const merge = require('webpack-merge');
 const addAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+
 const devConfig = require('./webpack.dev');
 const prodConfig = require('./webpack.prod');
+const { getHtmlWebPackPlugins,entry } = require("./webpack.base");
+// 路径
+let srcPath = path.join(process.cwd(), './src');
 const devMode = process.env.NODE_ENV !== 'production';
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const makePlugins = (configs) => {
     const plugins = [
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({
-            // filename: devMode ? '[name].css' : '[name].[hash].css',
-            // chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
+            filename: devMode ? '[name].css' : '[name].[hash].css',
+            chunkFilename: devMode ? '[id].css' : '[id].[hash].css',
             filename: '[name].css',
             chunkFilename: '[id].css',
             ignoreOrder: false,
         })
     ]
     //多页面打包
-    Object.keys(configs.entry).forEach(item => {
-        plugins.push(new HtmlWebpackPlugin({
-            template: "src/index.html",
-            filename: `${item}.html`,
-            chunks: ['runtime', 'vendors', item]//希望增加的模块   自动化处理多页应用
-        }))
+    getHtmlWebPackPlugins().forEach(plugin => {
+        plugins.push(plugin)
     })
+
     //处理公共需求包
     const files = fs.readdirSync(path.resolve(__dirname, '../dll'));
     files.forEach(file => {
@@ -49,75 +48,73 @@ const makePlugins = (configs) => {
     return plugins;
 }
 
-
 const commonConfig = {
-    entry: {
-        main: './src/index.js',
-        list:"./src/List.js"
-    },
-    output: {
-        filename: '[name].js',
-        chunkFilename: '[name].chunk.js',
-        path: path.resolve(__dirname, '../dist'),
-    },
+    entry: entry(),
+    // 模块索引规则
     resolve: {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.jsx', '.js'],
         alias: {
-            images: path.resolve(__dirname, 'src/images/'),
-            libs: path.resolve(__dirname, 'src/libs/')
+            api: path.join(srcPath, 'api'),
+            commons: path.join(srcPath, 'commons'),
+            components: path.join(srcPath, 'components'),
+            images: path.join(srcPath, 'images'),
+            sources: path.join(srcPath, 'sources'),
+            styles: path.join(srcPath, 'styles'),
+            views: path.join(srcPath, 'views'),
+            reducers: path.join(srcPath, "reducers")
         }
     },
     module: {
         rules: [
             {
+                test: /\.(html)$/,
+                use: {
+                    loader: 'html-loader',
+                    options: {
+                        attrs: ['script:src', "link:href", "img:src", "a:href"],//解析替换的属性
+                        interpolate: true,
+                        minimize: false
+                    }
+                }
+            },
+            {
                 test: /\.(png|jpe?g|gif)$/i,
                 loader: 'url-loader',
                 options: {
                     limit: 4096,
-                    name: '[name].[ext]',
+                    name: '[name][hash:base64:5].[ext]',
                     outputPath: "images/"
                 },
             }, {
-                test: /\.(eot|ttf|svg)$/i,
+                test: /\.(ico|mp4|ogg|svg|eot|otf|ttf|woff|woff2)$/i,
                 loader: 'file-loader',
             }, {
-                test: /\.(sa|sc|c)ss$/i,
+                test: /\.less$/i,
                 use: [
-                    // "style-loader", //MiniCssExtractPlugin也有热更新了
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: {
-                            publicPath: '../',
+                            publicPath: '/',
                             hmr: process.env.NODE_ENV === 'development',
-                            // reloadAll: true,// if hmr does not work, this is a forceful method.
                         },
                     },
-                    {
+                    { 
                         loader: 'css-loader',
                         options: {
                             importLoaders: 2,  //scss内导入前@***执行前也要走两个loader
                             modules: true//css模块化
                         }
-                    }, "postcss-loader", "sass-loader"
+                    }, "postcss-loader", "less-loader"
                 ]
             }, {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 use: [
                     { loader: "babel-loader" },
-                    // {loader:"imports-loader?this=>window"}
                 ]
             }
         ],
     },
-    // plugins: plugins,
-    // [
-    // new webpack.ProvidePlugin({ //当发现业务代码中使用了$模块内部会自动导入'jquery',
-    //     $:"jquery",
-    //     _join:['lodash','join'],  //打包指定的方法lodash的join，可以全局用_join
-    // })
-    // new BundleAnalyzerPlugin()
-    // ],
     optimization: {
         runtimeChunk: {//老版本未更改hash变化解决
             name: 'runtime'

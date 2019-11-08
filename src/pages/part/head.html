@@ -1,0 +1,31 @@
+<!-- head start -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="format-detection" content="telephone=no, email=no, adress=no" />
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">   
+<meta name="keywords" content="" />
+<meta name="description" content=""/>  
+<link rel="shortcut icon" type="image/x-icon" href="" />
+
+${__define_debug__ ? `
+    <script>
+      // 加载调试面板
+      (function() {
+        var keyword = 'vConsole';
+        var search = window.location.search;
+        if(search.indexOf(keyword) != -1) {
+          document.write('<sc' + 'ript src="${require('!!file-loader!vconsole')}" crossorigin="anonymous"></sc' + 'ript>');
+        }
+      })();
+    </script>
+    ` : ''}
+<script>
+  (function () {
+    var phoneScale = parseInt(window.screen.width) / 750;
+    document.write('<meta name="viewport" content="width=750, minimum-scale=' + phoneScale + ', maximum-scale=' +
+      phoneScale + ', user-scalable=no">');
+  })();
+</script>
+<!-- head end -->
